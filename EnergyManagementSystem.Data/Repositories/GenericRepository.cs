@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace EnergyManagementSystem.Data.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class //DIP
+    public class GenericRepository<T> : IGenericRepository<T> where T : class //DIP 
     {
         protected readonly DatabaseContext _context;
         private readonly DbSet<T> _dbSet;

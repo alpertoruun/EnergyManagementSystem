@@ -1,0 +1,301 @@
+using EnergyManagementSystem.Core.DTOs;
+using EnergyManagementSystem.Core.DTOs.Device;
+using EnergyManagementSystem.Core.Enums;
+using System.Threading.Tasks;
+namespace EnergyManagementSystem.Core.Interfaces.IService
+{
+    public interface IDeviceService
+    {
+        Task<DeviceDto> GetByIdAsync(int deviceId);
+        Task<IEnumerable<DeviceDto>> GetHouseDevicesAsync(int houseId);
+        Task<DeviceDto> CreateAsync(int houseId, CreateDeviceDto createDeviceDTO);
+        Task UpdateAsync(int deviceId, UpdateDeviceDto updateDeviceDTO);
+        Task DeleteAsync(int deviceId);
+        Task<IEnumerable<DeviceDto>> GetDevicesByRoomAsync(int roomId);
+        Task UpdateDeviceStatusAsync(int deviceId, DeviceStatus status);
+    }
+}
+using EnergyManagementSystem.Core.DTOs.EnergyUsage;
+using EnergyManagementSystem.Core.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+namespace EnergyManagementSystem.Core.Interfaces
+{
+    public interface IEnergyUsageService
+    {
+        Task<EnergyUsageDto> GetByIdAsync(int id);
+        Task<IEnumerable<EnergyUsageDto>> GetAllAsync();
+        Task<EnergyUsageDto> AddAsync(CreateEnergyUsageDto dto);
+        Task<bool> RemoveAsync(int id);
+        Task<bool> UpdateAsync(int id, CreateEnergyUsageDto dto);
+
+        Task<EnergyUsageDto> GetCurrentUsageAsync(int deviceId);
+        Task<IEnumerable<EnergyUsageDto>> GetUsageHistoryAsync(int deviceId, DateTime startDate, DateTime endDate);
+    }
+}
+using EnergyManagementSystem.Core.DTOs.House;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+namespace EnergyManagementSystem.Core.Interfaces
+{
+    public interface IHouseService 
+    { Task<HouseDto> GetByIdAsync(int houseId);
+        Task<IEnumerable<HouseDto>> GetUserHousesAsync(int userId);
+        Task<HouseDto> CreateAsync(int userId, CreateHouseDto createHouseDTO);
+        Task UpdateAsync(int houseId, UpdateHouseDto updateHouseDTO);
+        Task DeleteAsync(int houseId);
+        Task TogglePowerSavingModeAsync(int houseId, bool enabled);
+        
+    }
+}
+using EnergyManagementSystem.Core.DTOs.Notification;
+
+namespace EnergyManagementSystem.Core.Interfaces
+{
+    public interface INotificationService 
+    { Task<NotificationDto> GetByIdAsync(int notificationId);
+        Task<IEnumerable<NotificationDto>> GetUserNotificationsAsync(int userId);
+        Task CreateAsync(CreateNotificationDto createNotificationDTO);
+        Task MarkAsReadAsync(int notificationId);
+        Task DeleteAsync(int notificationId);
+        Task<int> GetUnreadCountAsync(int userId);
+        
+    }
+}
+using EnergyManagementSystem.Core.DTOs.Schedule;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+namespace EnergyManagementSystem.Core.Interfaces
+{
+    public interface IScheduleService 
+    { Task<ScheduleDto> GetByIdAsync(int scheduleId);
+        Task<IEnumerable<ScheduleDto>> GetDeviceSchedulesAsync(int deviceId);
+        Task<ScheduleDto> CreateAsync(CreateScheduleDto createScheduleDTO);
+        Task UpdateAsync(int scheduleId, UpdateScheduleDto updateScheduleDTO);
+        Task DeleteAsync(int scheduleId);
+        Task<IEnumerable<ScheduleDto>> GetActiveSchedulesAsync(int deviceId);
+        
+    }
+}
+using EnergyManagementSystem.Core.DTOs.User;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+namespace EnergyManagementSystem.Core.Interfaces
+{
+    public interface IUserService 
+    { Task<UserDto> GetByIdAsync(int userId);
+        Task<UserDto> GetByEmailAsync(string email);
+        Task<UserDto> CreateAsync(CreateUserDto createUserDTO);
+        Task UpdateAsync(int userId, UpdateUserDto updateUserDTO);
+        Task DeleteAsync(int userId);
+        Task<bool> ValidateCredentialsAsync(string email, string password);
+        Task ChangePasswordAsync(int userId, string currentPassword, string newPassword);
+        
+    }
+}
+using EnergyManagementSystem.Core.DTOs.UserSetting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+namespace EnergyManagementSystem.Core.Interfaces
+{
+    public interface IUserSettingsService 
+    { Task<UserSettingDto> GetAllSettingsAsync(int userId);
+        Task<string> GetPreferenceAsync(int userId, string key);
+        Task UpdateSettingAsync(int userId, string key, string value);
+        Task UpdateSettingsAsync(int userId, UpdateUserSettingDto settings);
+        
+    }
+}
+using EnergyManagementSystem.Core.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EnergyManagementSystem.Core.Interfaces
+{
+    public interface IDeviceRepository : IGenericRepository<Device>
+    {
+        Task<IEnumerable<Device>> GetDevicesByHouseIdAsync(int houseId);
+        Task<IEnumerable<Device>> GetDevicesByRoomIdAsync(int roomId);
+        Task<Device> GetDeviceWithDetailsAsync(int deviceId);
+    }
+
+}
+﻿using EnergyManagementSystem.Core.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EnergyManagementSystem.Core.Interfaces
+{
+    public interface IEnergyUsageRepository : IGenericRepository<EnergyUsage>
+    {
+        Task<IEnumerable<EnergyUsage>> GetUsageByDeviceIdAsync(int deviceId, DateTime startDate, DateTime endDate);
+        Task<decimal> GetTotalConsumptionAsync(int deviceId, DateTime startDate, DateTime endDate);
+    }
+}
+﻿using System.Linq.Expressions;
+
+
+namespace EnergyManagementSystem.Core.Interfaces
+{
+    public interface IGenericRepository<T> where T : class
+    {
+        // Temel CRUD operasyonları
+        Task<T> GetByIdAsync(int id);
+        Task<IEnumerable<T>> GetAllAsync();
+        Task<T> AddAsync(T entity);
+        Task UpdateAsync(T entity);
+        Task DeleteAsync(T entity);
+
+        // Filtreleme için
+        Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
+
+        // Tek kayıt getirme
+        Task<T> SingleOrDefaultAsync(Expression<Func<T, bool>> predicate);
+    }
+}﻿using EnergyManagementSystem.Core.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EnergyManagementSystem.Core.Interfaces
+{
+    public interface IHouseRepository : IGenericRepository<House>
+    {
+        Task<IEnumerable<House>> GetHousesByUserIdAsync(int userId);
+        Task<House> GetHouseWithDetailsAsync(int houseId);
+    }
+}
+﻿using EnergyManagementSystem.Core.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EnergyManagementSystem.Core.Interfaces
+{
+    public interface INotificationRepository : IGenericRepository<Notification>
+    {
+        Task<IEnumerable<Notification>> GetUnreadNotificationsAsync(int userId);
+        Task<int> GetUnreadNotificationCountAsync(int userId);
+    }
+}
+﻿using EnergyManagementSystem.Core.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EnergyManagementSystem.Core.Interfaces
+{
+    public interface IRoomRepository : IGenericRepository<Room>
+    {
+        Task<IEnumerable<Room>> GetRoomsByHouseIdAsync(int houseId);
+        Task<Room> GetRoomWithDevicesAsync(int roomId);
+    }
+}
+﻿using EnergyManagementSystem.Core.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EnergyManagementSystem.Core.Interfaces
+{
+    public interface IScheduleRepository : IGenericRepository<Schedule>
+    {
+        Task<IEnumerable<Schedule>> GetSchedulesByDeviceIdAsync(int deviceId);
+        Task<IEnumerable<Schedule>> GetActiveSchedulesAsync();
+    }
+}
+﻿using EnergyManagementSystem.Core.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EnergyManagementSystem.Core.Interfaces
+{
+    public interface IUserRepository : IGenericRepository<User>
+    {
+        Task<User> GetUserByEmailAsync(string email);
+        Task<User> GetUserWithDetailsAsync(int userId);
+    }
+}
+﻿using EnergyManagementSystem.Core.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EnergyManagementSystem.Core.Interfaces
+{
+    public interface IUserSettingRepository : IGenericRepository<UserSetting>
+    {
+        Task<IEnumerable<UserSetting>> GetSettingsByUserIdAsync(int userId);
+        Task<UserSetting> GetSettingByPreferenceAsync(int userId, string preference);
+    }
+}
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EnergyManagementSystem.Core.Enums
+{
+    public enum DeviceStatus
+    {
+        Off = 0,
+        On = 1,
+        PowerSaving = 2
+    }
+
+}
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EnergyManagementSystem.Core.Enums
+{
+    public enum DeviceType
+    {
+        LightBulb = 0,
+        AirConditioner = 1,
+        Television = 2,
+        WashingMachine = 3,
+        Refrigerator = 4,
+        Dishwasher = 5,
+        WaterHeater = 6,
+        Other = 99
+    }
+}

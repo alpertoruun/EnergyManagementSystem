@@ -2,7 +2,6 @@ using EnergyManagementSystem.Core.Interfaces;
 using EnergyManagementSystem.Data.Context;
 using EnergyManagementSystem.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +17,7 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
         });
 });
 
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>)); //Repository pattern 
 
 var app = builder.Build();
 
