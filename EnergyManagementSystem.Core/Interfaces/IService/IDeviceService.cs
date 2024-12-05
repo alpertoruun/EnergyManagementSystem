@@ -1,6 +1,5 @@
 using EnergyManagementSystem.Core.DTOs;
 using EnergyManagementSystem.Core.DTOs.Device;
-using EnergyManagementSystem.Core.Enums;
 using System.Threading.Tasks;
 namespace EnergyManagementSystem.Core.Interfaces.IService
 {
@@ -12,6 +11,6 @@ namespace EnergyManagementSystem.Core.Interfaces.IService
         Task UpdateAsync(int deviceId, UpdateDeviceDto updateDeviceDTO);
         Task DeleteAsync(int deviceId);
         Task<IEnumerable<DeviceDto>> GetDevicesByRoomAsync(int roomId);
-        Task UpdateDeviceStatusAsync(int deviceId, DeviceStatus status);
+        Task UpdateDeviceStatusAsync(int deviceId, bool status);
     }
 }

@@ -1,6 +1,5 @@
 ﻿using EnergyManagementSystem.Core.DTOs;
 using EnergyManagementSystem.Core.DTOs.Device;
-using EnergyManagementSystem.Core.Enums;
 using EnergyManagementSystem.Core.Interfaces;
 using EnergyManagementSystem.Core.Interfaces.IService;
 using EnergyManagementSystem.Core.Models;
@@ -72,7 +71,7 @@ namespace EnergyManagementSystem.Core.Services
                 HouseId = houseId,
                 RoomId = createDeviceDto.RoomId,
                 PowerSavingMode = createDeviceDto.PowerSavingMode,
-                Status = DeviceStatus.Off 
+                Status = false // Default to off
             };
 
             var createdDevice = await _deviceRepository.AddAsync(device);
@@ -88,18 +87,16 @@ namespace EnergyManagementSystem.Core.Services
             device.Name = updateDeviceDto.Name;
             device.Type = updateDeviceDto.Type;
 
-            // PowerSaving mode açıksa status'ü PowerSaving yapıyoruz
+            // If PowerSaving mode is enabled, turn off the device
             if (updateDeviceDto.PowerSavingMode)
             {
-                device.Status = DeviceStatus.PowerSaving;
+                device.Status = false;
             }
-            // PowerSaving mode kapalıysa DTO'dan gelen status'ü kullanıyoruz
             else
             {
-                // PowerSaving modunda değilse sadece On veya Off olabilir
-                device.Status = updateDeviceDto.Status == DeviceStatus.PowerSaving ?
-                    DeviceStatus.Off : updateDeviceDto.Status;
+                device.Status = updateDeviceDto.Status;
             }
+
             device.PowerSavingMode = updateDeviceDto.PowerSavingMode;
             device.EnergyLimit = updateDeviceDto.EnergyLimit;
 
@@ -132,7 +129,7 @@ namespace EnergyManagementSystem.Core.Services
             return deviceDtos;
         }
 
-        public async Task UpdateDeviceStatusAsync(int deviceId, DeviceStatus status)
+        public async Task UpdateDeviceStatusAsync(int deviceId, bool status)
         {
             var device = await _deviceRepository.GetByIdAsync(deviceId);
             if (device == null)
@@ -140,13 +137,7 @@ namespace EnergyManagementSystem.Core.Services
 
             device.Status = status;
 
-            // PowerSaving moduna geçilirse PowerSavingMode'u true yapıyoruz
-            if (status == DeviceStatus.PowerSaving)
-            {
-                device.PowerSavingMode = true;
-            }
-            // PowerSaving modundan çıkılırsa PowerSavingMode'u false yapıyoruz
-            else if (device.PowerSavingMode && (status == DeviceStatus.On || status == DeviceStatus.Off))
+            if (device.PowerSavingMode)
             {
                 device.PowerSavingMode = false;
             }
@@ -161,7 +152,7 @@ namespace EnergyManagementSystem.Core.Services
                 DeviceId = device.DeviceId,
                 Name = device.Name,
                 Type = device.Type,
-                Status = device.Status, 
+                Status = device.Status,
                 PowerSavingMode = device.PowerSavingMode,
                 EnergyLimit = device.EnergyLimit,
                 RoomName = device.Room?.Name,

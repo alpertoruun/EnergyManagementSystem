@@ -1,5 +1,4 @@
-﻿using EnergyManagementSystem.Core.Enums;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace EnergyManagementSystem.Core.Models
 {
@@ -9,8 +8,8 @@ namespace EnergyManagementSystem.Core.Models
         public int HouseId { get; set; }
         public int RoomId { get; set; }  
         public string Name { get; set; }
-        public DeviceStatus Status { get; set; }
-        public DeviceType Type { get; set; }
+        public string Type { get; set; }
+        public bool Status { get; set; }
         public bool PowerSavingMode { get; set; }
         public decimal? EnergyLimit { get; set; }  // Opsiyonel
         public DateTime CreatedAt { get; set; }
