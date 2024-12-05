@@ -12,6 +12,11 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using EnergyManagementSystem.Core.DTOs.Auth;
+using EnergyManagementSystem.Core.Validators;
+using FluentValidation.AspNetCore;
+using FluentValidation;
+using EnergyManagementSystem.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +59,10 @@ builder.Services.AddScoped<IUserSettingsService, UserSettingsService>();
 // Configuration Bindings
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
+//Validator
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddScoped<IValidator<RegisterDto>, RegisterDtoValidator>();
 
 // Authentication & Authorization
 builder.Services.AddAuthentication(options =>
@@ -125,6 +134,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseGlobalExceptionHandler();
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("AllowSpecific");
