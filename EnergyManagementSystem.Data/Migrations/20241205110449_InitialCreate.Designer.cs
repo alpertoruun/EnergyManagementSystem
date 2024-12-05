@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EnergyManagementSystem.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20241130161547_InitialCreate")]
+    [Migration("20241205110449_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -250,6 +250,9 @@ namespace EnergyManagementSystem.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsEmailConfirmed")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -287,6 +290,40 @@ namespace EnergyManagementSystem.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserSettings");
+                });
+
+            modelBuilder.Entity("EnergyManagementSystem.Core.Models.UserToken", b =>
+                {
+                    b.Property<int>("TokenId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TokenId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TokenType")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("TokenId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserTokens");
                 });
 
             modelBuilder.Entity("EnergyManagementSystem.Core.Models.Device", b =>
@@ -385,6 +422,17 @@ namespace EnergyManagementSystem.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("EnergyManagementSystem.Core.Models.UserToken", b =>
+                {
+                    b.HasOne("EnergyManagementSystem.Core.Models.User", "User")
+                        .WithMany("UserTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("EnergyManagementSystem.Core.Models.Device", b =>
                 {
                     b.Navigation("EnergyUsages");
@@ -413,6 +461,8 @@ namespace EnergyManagementSystem.Data.Migrations
                     b.Navigation("Notifications");
 
                     b.Navigation("UserSettings");
+
+                    b.Navigation("UserTokens");
                 });
 #pragma warning restore 612, 618
         }

@@ -18,5 +18,7 @@ namespace EnergyManagementSystem.Data.Context
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Limit> Limits { get; set; }
         public DbSet<UserSetting> UserSettings { get; set; }
+        public DbSet<UserToken> UserTokens { get; set; }
+
     }
 }
