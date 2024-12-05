@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="API\Controllers\" />
     <Folder Include="API\Filters\" />
     <Folder Include="API\Middlewares\" />
   </ItemGroup>
