@@ -1,87 +1,68 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using EnergyManagementSystem.Core.Interfaces;
 using EnergyManagementSystem.Core.DTOs.User;
-using System.Threading.Tasks;
+using EnergyManagementSystem.Core.DTOs.House;
+
 
 namespace EnergyManagementSystem.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IHouseService _houseService;  //DI
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, IHouseService houseService)
         {
             _userService = userService;
+            _houseService = houseService;
         }
 
-        // GET: api/users
-        [HttpGet]
-        public async Task<IActionResult> GetAllUsers()
-        {
-            var users = await _userService.GetAllAsync();
-            return Ok(users);
-        }
-
-        // GET: api/users/{id}
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetUserById(int id)
+        public async Task<ActionResult<UserDto>> GetUserById(int id)
         {
             var user = await _userService.GetByIdAsync(id);
             if (user == null)
-            {
-                return NotFound(new { message = "User not found" });
-            }
-            return Ok(user);
+                return NotFound();
+
+            return user;
         }
 
-        // POST: api/users
-        [HttpPost]
-        public async Task<IActionResult> CreateUser(CreateUserDto createUserDto)
-        {
-            var user = await _userService.CreateAsync(createUserDto);
-            return CreatedAtAction(nameof(GetUserById), new { id = user.UserId }, user);
-        }
-
-        // PUT: api/users/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, UpdateUserDto updateUserDto)
         {
-            var user = await _userService.GetByIdAsync(id);
-            if (user == null)
+            try
             {
-                return NotFound(new { message = "User not found" });
+                await _userService.UpdateAsync(id, updateUserDto);
+                return NoContent();
             }
-
-            updateUserDto.UserId = id;
-            await _userService.UpdateAsync(id, updateUserDto);
-            return NoContent();
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
         }
 
-        // DELETE: api/users/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var user = await _userService.GetByIdAsync(id);
-            if (user == null)
+            try
             {
-                return NotFound(new { message = "User not found" });
+                await _userService.DeleteAsync(id);
+                return NoContent();
             }
-
-            await _userService.DeleteAsync(id);
-            return NoContent();
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
         }
 
-        // GET: api/users/{id}/houses
         [HttpGet("{id}/houses")]
-        public async Task<IActionResult> GetUserHouses(int id)
+        public async Task<ActionResult<IEnumerable<HouseDto>>> GetUserHouses(int id)
         {
-            var houses = await _userService.GetUserHousesAsync(id);
-            if (houses == null || !houses.Any())
-            {
-                return NotFound(new { message = "No houses found for this user" });
-            }
+            var houses = await _houseService.GetUserHousesAsync(id);
             return Ok(houses);
         }
     }

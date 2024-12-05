@@ -1,15 +1,21 @@
-using EnergyManagementSystem.Core.Interfaces;
+using EnergyManagementSystem.Core.Configuration;
 using EnergyManagementSystem.Core.Interfaces.IService;
+using EnergyManagementSystem.Core.Interfaces;
+using EnergyManagementSystem.Core.Services;
 using EnergyManagementSystem.Data.Context;
 using EnergyManagementSystem.Data.Repositories;
-using Microsoft.EntityFrameworkCore;
+using EnergyManagementSystem.Service.Services;
+using EnergyManagementSystem.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Microsoft.OpenApi.Models;
+using System.Text;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Database Configuration
 builder.Services.AddDbContext<DatabaseContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -20,9 +26,36 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
         });
 });
 
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>)); //Repository pattern 
-builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+// Repository Registrations
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IHouseRepository, HouseRepository>();
+builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
+builder.Services.AddScoped<IEnergyUsageRepository, EnergyUsageRepository>();
+builder.Services.AddScoped<IUserSettingRepository, UserSettingRepository>();
+builder.Services.AddScoped<IUserTokenRepository, UserTokenRepository>();
 
+// Service Registrations
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IHouseService, HouseService>();
+builder.Services.AddScoped<IDeviceService, DeviceService>();
+builder.Services.AddScoped<IRoomService, RoomService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IScheduleService, ScheduleService>();
+builder.Services.AddScoped<IEnergyUsageService, EnergyUsageService>();
+builder.Services.AddScoped<IUserSettingsService, UserSettingsService>();
+
+// Configuration Bindings
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
+// Authentication & Authorization
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -43,8 +76,16 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddControllers(); // Eklendi
+// CORS Policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecific", builder =>
+        builder.WithOrigins("http://localhost:3000")
+               .AllowAnyMethod()
+               .AllowAnyHeader());
+});
 
+// Swagger Configuration
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Energy Management System API", Version = "v1" });
@@ -64,28 +105,31 @@ builder.Services.AddSwaggerGen(c =>
     };
 
     c.AddSecurityDefinition("Bearer", securitySchema);
-
-    var securityRequirement = new OpenApiSecurityRequirement
-    {
-        { securitySchema, new[] { "Bearer" } }
-    };
-
-    c.AddSecurityRequirement(securityRequirement);
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+   {
+       { securitySchema, new[] { "Bearer" } }
+   });
 });
+
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
-app.UseRouting();
+// Configure Middleware Pipeline
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Energy Management System API v1");
+    });
+}
 
+app.UseHttpsRedirection();
+app.UseRouting();
+app.UseCors("AllowSpecific");
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Energy Management System API v1");
-});
-
 app.MapControllers();
 
 app.Run();
