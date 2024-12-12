@@ -16,5 +16,7 @@ namespace EnergyManagementSystem.Core.Interfaces.IService
         Task<bool> ResetPasswordAsync(string email, string token, string newPassword);
         Task<bool> ChangePasswordAsync(int userId, string currentPassword, string newPassword);
         Task<bool> RevokeRefreshTokenAsync(string refreshToken);
+        Task<bool> ConfirmEmailAsync(string email, string token);
+
     }
 }

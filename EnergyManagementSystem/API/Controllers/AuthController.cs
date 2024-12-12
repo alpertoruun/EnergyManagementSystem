@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using EnergyManagementSystem.Core.DTOs.Auth;
 using EnergyManagementSystem.Core.Interfaces.IService;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EnergyManagementSystem.API.Controllers
 {
@@ -22,6 +23,28 @@ namespace EnergyManagementSystem.API.Controllers
         {
             var result = await _authService.RegisterAsync(registerDto);
             return Ok(result);
+        }
+
+        [HttpGet("confirm-email")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string token, string email)
+        {
+            var result = await _authService.ConfirmEmailAsync(email, token);
+
+            if (result)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = "Email confirmed successfully. You can now login."
+                });
+            }
+
+            return BadRequest(new
+            {
+                success = false,
+                message = "Invalid token or email."
+            });
         }
 
         [HttpPost("login")]

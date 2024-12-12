@@ -20,6 +20,9 @@ using EnergyManagementSystem.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAutoMapper(typeof(Program).Assembly,
+    typeof(EnergyUsageService).Assembly);
+
 // Database Configuration
 builder.Services.AddDbContext<DatabaseContext>(options =>
 {
@@ -88,8 +91,8 @@ builder.Services.AddAuthorization();
 // CORS Policy
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecific", builder =>
-        builder.WithOrigins("http://localhost:3000")
+    options.AddPolicy("AllowAll", builder =>
+        builder.AllowAnyOrigin()
                .AllowAnyMethod()
                .AllowAnyHeader());
 });
@@ -137,7 +140,7 @@ if (app.Environment.IsDevelopment())
 app.UseGlobalExceptionHandler();
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseCors("AllowSpecific");
+app.UseCors("AllowAll"); 
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

@@ -52,12 +52,11 @@ namespace EnergyManagementSystem.Service.Services
         {
             var subject = "Confirm Your Email Address";
             var body = $@"
-            <h2>Welcome to Energy Management System!</h2>
-            <p>Please confirm your email address by clicking the link below:</p>
-            <p><a href='http://localhost:7211/confirm-email?token={confirmationToken}&email={to}'>Confirm Email</a></p>
-            <p>This link will expire in 24 hours.</p>
-            <p>If you didn't create an account, please ignore this email.</p>";
-
+        <h2>Welcome to Energy Management System!</h2>
+        <p>Please confirm your email address by clicking the link below:</p>
+        <p><a href='http://localhost:7211/api/auth/confirm-email?token={confirmationToken}&email={to}'>Confirm Email</a></p>
+        <p>This link will expire in 24 hours.</p>
+        <p>If you didn't create an account, please ignore this email.</p>";
             await SendEmailAsync(to, subject, body);
         }
     }
