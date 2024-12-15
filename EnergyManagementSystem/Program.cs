@@ -17,11 +17,12 @@ using EnergyManagementSystem.Core.Validators;
 using FluentValidation.AspNetCore;
 using FluentValidation;
 using EnergyManagementSystem.API.Middleware;
+using EnergyManagementSystem.Service.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAutoMapper(typeof(Program).Assembly,
-    typeof(EnergyUsageService).Assembly);
+builder.Services.AddAutoMapper(typeof(AuthMappingProfile).Assembly);
+
 
 // Database Configuration
 builder.Services.AddDbContext<DatabaseContext>(options =>
