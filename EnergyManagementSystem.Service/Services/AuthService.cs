@@ -51,6 +51,7 @@ namespace EnergyManagementSystem.Core.Services
             return await GenerateTokensAsync(user);
         }
 
+
         public async Task<TokenDto> RegisterAsync(RegisterDto registerDto)
         {
             var existingUser = await _userRepository.GetUserByEmailAsync(registerDto.Email);
@@ -213,13 +214,19 @@ namespace EnergyManagementSystem.Core.Services
                 Expiration = token.ValidTo
             };
         }
-
         private string GenerateRandomToken()
         {
             var randomBytes = new byte[32];
             using var rng = RandomNumberGenerator.Create();
             rng.GetBytes(randomBytes);
-            return Convert.ToBase64String(randomBytes);
+
+            string base64 = Convert.ToBase64String(randomBytes);
+
+            string base64Url = base64
+                .Replace('+', '-')
+                .Replace('/', '_')
+                .TrimEnd('=');
+            return base64Url;
         }
 
         public async Task<TokenDto> RefreshTokenAsync(string refreshToken)

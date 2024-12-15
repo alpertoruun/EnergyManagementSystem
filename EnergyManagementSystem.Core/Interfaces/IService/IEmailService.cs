@@ -11,5 +11,6 @@ namespace EnergyManagementSystem.Core.Interfaces.IService
         Task SendEmailAsync(string to, string subject, string body);
         Task SendPasswordResetEmailAsync(string to, string resetToken);
         Task SendEmailConfirmationAsync(string to, string confirmationToken);
+        Task SendEmailChangeConfirmationAsync(string to, string token);
     }
 }

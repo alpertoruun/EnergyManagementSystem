@@ -15,6 +15,7 @@ namespace EnergyManagementSystem.Core.Models
         public int UserId { get; set; }
         public string Token { get; set; }
         public TokenType TokenType { get; set; } // For EMAIL_CONFIRMATION, PASSWORD_RESET, etc.
+        public string? Data { get; set; }
         public DateTime ExpiryDate { get; set; }
         public bool IsUsed { get; set; }
         public DateTime CreatedAt { get; set; }

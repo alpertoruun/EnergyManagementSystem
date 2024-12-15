@@ -2,6 +2,8 @@
 using EnergyManagementSystem.Core.DTOs.Auth;
 using EnergyManagementSystem.Core.Interfaces.IService;
 using Microsoft.AspNetCore.Authorization;
+using EnergyManagementSystem.Core.DTOs.User;
+using System.Security.Claims;
 
 namespace EnergyManagementSystem.API.Controllers
 {

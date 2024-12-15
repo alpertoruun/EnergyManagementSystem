@@ -13,5 +13,7 @@ namespace EnergyManagementSystem.Core.Configuration
         public bool UseTls { get; set; } = true;
         public string Username { get; set; } = "alpertorun4455@gmail.com";
         public string Password { get; set; } = "weew audi svvu mbio";
+        public string ClientUrl { get; set; } = "http://localhost:5173";
+        public string ApiUrl { get; set; } = "http://localhost:5286";
     }
 }

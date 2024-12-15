@@ -40,12 +40,11 @@ namespace EnergyManagementSystem.Service.Services
         {
             var subject = "Password Reset Request";
             var body = $@"
-                <h2>Password Reset Request</h2>
-                <p>To reset your password, click the link below:</p>
-                <p><a href='http://localhost:7211/reset-password?token={resetToken}&email={to}'>Reset Password</a></p>
-                <p>If you didn't request a password reset, please ignore this email.</p>
-                <p>This link will expire in 1 hour.</p>";
-
+        <h2>Password Reset Request</h2>
+        <p>To reset your password, click the link below:</p>
+        <p><a href='{_emailSettings.ClientUrl}/reset-password?token={resetToken}&email={to}'>Reset Password</a></p>
+        <p>If you didn't request a password reset, please ignore this email.</p>
+        <p>This link will expire in 1 hour.</p>";
             await SendEmailAsync(to, subject, body);
         }
         public async Task SendEmailConfirmationAsync(string to, string confirmationToken)
@@ -57,6 +56,17 @@ namespace EnergyManagementSystem.Service.Services
         <p><a href='http://localhost:7211/api/auth/confirm-email?token={confirmationToken}&email={to}'>Confirm Email</a></p>
         <p>This link will expire in 24 hours.</p>
         <p>If you didn't create an account, please ignore this email.</p>";
+            await SendEmailAsync(to, subject, body);
+        }
+        public async Task SendEmailChangeConfirmationAsync(string to, string token)
+        {
+            var subject = "Email Change Confirmation";
+            var body = $@"
+        <h2>Email Change Request</h2>
+        <p>To confirm your new email address, click the link below:</p>
+        <p><a href='{_emailSettings.ClientUrl}/email-confirmation?token={token}&email={to}'>Confirm Email Change</a></p>
+        <p>If you didn't request this change, please ignore this email.</p>
+        <p>This link will expire in 1 hour.</p>";
             await SendEmailAsync(to, subject, body);
         }
     }

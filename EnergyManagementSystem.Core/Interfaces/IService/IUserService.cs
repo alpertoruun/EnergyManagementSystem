@@ -18,5 +18,9 @@ namespace EnergyManagementSystem.Core.Interfaces
         Task<IEnumerable<HouseDto>> GetUserHousesAsync(int userId);
         Task<IEnumerable<UserDto>> GetAllAsync(); // Yeni metod tanýmý
 
+        Task InitiateEmailChangeAsync(int userId, string newEmail);
+        Task ConfirmEmailChangeAsync(string email, string token);
+
+
     }
 }

@@ -12,5 +12,6 @@ namespace EnergyManagementSystem.Core.Interfaces
     {
         Task<UserToken> GetValidTokenAsync(int userId, string token, TokenType tokenType);
         Task<bool> InvalidateTokensAsync(int userId, TokenType tokenType);
+        Task<UserToken> GetTokenByValueAsync(string token, TokenType tokenType);
     }
 }

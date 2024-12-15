@@ -10,6 +10,7 @@ namespace EnergyManagementSystem.Core.Enums
     {
         EmailConfirmation,
         PasswordReset,
-        RefreshToken
+        RefreshToken,
+        EmailChange
     }
 }

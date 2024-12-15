@@ -30,6 +30,15 @@ namespace EnergyManagementSystem.Data.Repositories
                     t.ExpiryDate > DateTime.UtcNow &&
                     !t.IsUsed);
         }
+        public async Task<UserToken> GetTokenByValueAsync(string token, TokenType tokenType)
+        {
+            return await _context.UserTokens
+                .FirstOrDefaultAsync(t =>
+                    t.Token == token &&
+                    t.TokenType == tokenType &&
+                    t.ExpiryDate > DateTime.UtcNow &&
+                    !t.IsUsed);
+        }
 
         public async Task<bool> InvalidateTokensAsync(int userId, TokenType tokenType)
         {
