@@ -71,7 +71,8 @@ namespace EnergyManagementSystem.Core.Services
                 HouseId = houseId,
                 RoomId = createDeviceDto.RoomId,
                 PowerSavingMode = createDeviceDto.PowerSavingMode,
-                Status = false // Default to off
+                Status = false,// Default to off
+                CreatedAt = DateTime.UtcNow // Burada ekliyoruz
             };
 
             var createdDevice = await _deviceRepository.AddAsync(device);
@@ -99,6 +100,7 @@ namespace EnergyManagementSystem.Core.Services
 
             device.PowerSavingMode = updateDeviceDto.PowerSavingMode;
             device.EnergyLimit = updateDeviceDto.EnergyLimit;
+            device.LimitType = updateDeviceDto.LimitType;
 
             await _deviceRepository.UpdateAsync(device);
         }
@@ -136,11 +138,6 @@ namespace EnergyManagementSystem.Core.Services
                 throw new KeyNotFoundException($"Device with ID {deviceId} not found.");
 
             device.Status = status;
-
-            if (device.PowerSavingMode)
-            {
-                device.PowerSavingMode = false;
-            }
 
             await _deviceRepository.UpdateAsync(device);
         }
