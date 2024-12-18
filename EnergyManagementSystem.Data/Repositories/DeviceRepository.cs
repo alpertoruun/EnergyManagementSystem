@@ -14,12 +14,12 @@ namespace EnergyManagementSystem.Data.Repositories
         {
             _context = context;
         }
-
         public async Task<IEnumerable<Device>> GetDevicesByHouseIdAsync(int houseId)
         {
             return await _context.Devices
                 .Where(d => d.HouseId == houseId)
                 .Include(d => d.Room)
+                .Include(d => d.Limits)  
                 .ToListAsync();
         }
 

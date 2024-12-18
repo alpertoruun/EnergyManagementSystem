@@ -14,8 +14,6 @@ namespace EnergyManagementSystem.Core.DTOs.Device
         public bool Status { get; set; }
         public string Type { get; set; }
         public bool PowerSavingMode { get; set; }
-        public decimal? EnergyLimit { get; set; }
-        public string? LimitType { get; set; }
     }
 
 }

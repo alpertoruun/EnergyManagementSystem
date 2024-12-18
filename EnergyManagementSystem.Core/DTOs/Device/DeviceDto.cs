@@ -1,4 +1,5 @@
-﻿using EnergyManagementSystem.Core.Enums;
+﻿using EnergyManagementSystem.Core.DTOs.Limit;
+using EnergyManagementSystem.Core.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,9 @@ namespace EnergyManagementSystem.Core.DTOs.Device
         public bool Status { get; set; } 
         public string Type { get; set; } 
         public bool PowerSavingMode { get; set; }
-        public decimal? EnergyLimit { get; set; }
         public string RoomName { get; set; }
         public string HouseName { get; set; }
+        public ICollection<LimitDto> Limits { get; set; } = new List<LimitDto>();
+
     }
 }

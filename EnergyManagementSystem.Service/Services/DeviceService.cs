@@ -1,5 +1,6 @@
 ﻿using EnergyManagementSystem.Core.DTOs;
 using EnergyManagementSystem.Core.DTOs.Device;
+using EnergyManagementSystem.Core.DTOs.Limit;
 using EnergyManagementSystem.Core.Interfaces;
 using EnergyManagementSystem.Core.Interfaces.IService;
 using EnergyManagementSystem.Core.Models;
@@ -99,8 +100,6 @@ namespace EnergyManagementSystem.Core.Services
             }
 
             device.PowerSavingMode = updateDeviceDto.PowerSavingMode;
-            device.EnergyLimit = updateDeviceDto.EnergyLimit;
-            device.LimitType = updateDeviceDto.LimitType;
 
             await _deviceRepository.UpdateAsync(device);
         }
@@ -151,9 +150,16 @@ namespace EnergyManagementSystem.Core.Services
                 Type = device.Type,
                 Status = device.Status,
                 PowerSavingMode = device.PowerSavingMode,
-                EnergyLimit = device.EnergyLimit,
                 RoomName = device.Room?.Name,
-                HouseName = device.House?.Name
+                HouseName = device.House?.Name,
+                Limits = device.Limits?.Select(l => new LimitDto
+                {
+                    LimitId = l.LimitId,
+                    DeviceId = l.DeviceId,
+                    LimitValue = l.LimitValue,
+                    LimitType = l.LimitType,
+                    Period = l.Period
+                }).ToList() ?? new List<LimitDto>()
             };
         }
     }

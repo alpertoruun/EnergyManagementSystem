@@ -11,9 +11,6 @@ namespace EnergyManagementSystem.Core.Models
         public string Type { get; set; }
         public bool Status { get; set; }
         public bool PowerSavingMode { get; set; }
-        public decimal? EnergyLimit { get; set; }  // Opsiyonel
-        public string LimitType { get; set; } = "tl";
-
         public DateTime CreatedAt { get; set; }
 
         // Navigation properties

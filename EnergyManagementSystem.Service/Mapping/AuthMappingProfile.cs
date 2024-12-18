@@ -8,6 +8,7 @@ using EnergyManagementSystem.Core.DTOs.Room;
 using EnergyManagementSystem.Core.DTOs.Schedule;
 using EnergyManagementSystem.Core.DTOs.User;
 using EnergyManagementSystem.Core.DTOs.UserSetting;
+using EnergyManagementSystem.Core.DTOs.Limit;
 using EnergyManagementSystem.Core.Models;
 using System;
 using System.Collections.Generic;
@@ -28,12 +29,15 @@ namespace EnergyManagementSystem.Service.Mapping
             CreateMap<RegisterDto, User>();
         }
     }
-
     public class DeviceMappingProfile : Profile
     {
         public DeviceMappingProfile()
         {
-            CreateMap<Device, DeviceDto>();
+            CreateMap<Device, DeviceDto>()
+                .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room.Name))
+                .ForMember(dest => dest.HouseName, opt => opt.MapFrom(src => src.House.Name))
+                .ForMember(dest => dest.Limits, opt => opt.MapFrom(src => src.Limits));
+
             CreateMap<Device, CreateDeviceDto>();
             CreateMap<CreateDeviceDto, Device>();
             CreateMap<UpdateDeviceDto, Device>();
@@ -106,6 +110,15 @@ namespace EnergyManagementSystem.Service.Mapping
             CreateMap<UserSetting, UserSettingDto>();
             CreateMap<CreateUserSettingDto, UserSetting>();
             CreateMap<UpdateUserSettingDto, UserSetting>();
+        }
+    }
+    public class LimitMappingProfile : Profile
+    {
+        public LimitMappingProfile()
+        {
+            CreateMap<Limit, LimitDto>();
+            CreateMap<UpdateLimitDto, Limit>();
+            CreateMap<CreateLimitDto, Limit>(); 
         }
     }
 }

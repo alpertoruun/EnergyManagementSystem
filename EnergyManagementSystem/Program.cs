@@ -46,6 +46,8 @@ builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
 builder.Services.AddScoped<IEnergyUsageRepository, EnergyUsageRepository>();
 builder.Services.AddScoped<IUserSettingRepository, UserSettingRepository>();
 builder.Services.AddScoped<IUserTokenRepository, UserTokenRepository>();
+builder.Services.AddScoped<ILimitRepository, LimitRepository>();
+
 
 // Service Registrations
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
@@ -59,6 +61,8 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddScoped<IEnergyUsageService, EnergyUsageService>();
 builder.Services.AddScoped<IUserSettingsService, UserSettingsService>();
+builder.Services.AddScoped<ILimitService, LimitService>();
+
 
 // Configuration Bindings
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
