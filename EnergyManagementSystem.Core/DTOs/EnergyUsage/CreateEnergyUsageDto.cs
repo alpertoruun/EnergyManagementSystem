@@ -10,5 +10,6 @@ namespace EnergyManagementSystem.Core.DTOs.EnergyUsage
     {
         public int DeviceId { get; set; }
         public decimal Consumption { get; set; }
+        public DateTime Timestamp { get; set; }
     }
 }

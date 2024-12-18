@@ -35,6 +35,8 @@ namespace EnergyManagementSystem.API.Controllers
             [FromQuery] DateTime startDate,
             [FromQuery] DateTime endDate)
         {
+            var utcStartDate = DateTime.SpecifyKind(startDate, DateTimeKind.Utc);
+            var utcEndDate = DateTime.SpecifyKind(endDate, DateTimeKind.Utc);
             var history = await _energyUsageService.GetUsageHistoryAsync(deviceId, startDate, endDate);
             return Ok(history);
         }

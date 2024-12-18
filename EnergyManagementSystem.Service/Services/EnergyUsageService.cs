@@ -53,11 +53,18 @@ namespace EnergyManagementSystem.Service.Services
 
         public async Task<EnergyUsageDto> GetCurrentUsageAsync(int deviceId)
         {
-            var usages = await _energyUsageRepository.GetUsageByDeviceIdAsync(deviceId, DateTime.Now.AddDays(-1), DateTime.Now);
+            var endTime = DateTime.UtcNow;
+            var startTime = endTime.AddMinutes(-5);
+
+            var usages = await _energyUsageRepository.GetUsageByDeviceIdAsync(
+                deviceId,
+                startTime,
+                endTime
+            );
+
             var lastUsage = usages.OrderByDescending(u => u.Timestamp).FirstOrDefault();
             return _mapper.Map<EnergyUsageDto>(lastUsage);
         }
-
         public async Task<IEnumerable<EnergyUsageDto>> GetUsageHistoryAsync(int deviceId, DateTime startDate, DateTime endDate)
         {
             var history = await _energyUsageRepository.GetUsageByDeviceIdAsync(deviceId, startDate, endDate);

@@ -27,12 +27,18 @@ namespace EnergyManagementSystem.Data.Repositories
                 .OrderBy(s => s.StartTime)
                 .ToListAsync();
         }
-
         public async Task<IEnumerable<Schedule>> GetActiveSchedulesAsync()
         {
-            var currentTime = DateTime.Now;
+            var currentTime = DateTime.UtcNow;
+
             return await _context.Schedules
-                .Where(s => s.StartTime <= currentTime && s.EndTime >= currentTime)
+                .Where(s =>
+                    // Tekrarsız schedule'lar için zaman kontrolü yap
+                    (string.IsNullOrEmpty(s.Repeat) && s.StartTime <= currentTime && s.EndTime >= currentTime)
+                    ||
+                    // Tekrarlı schedule'lar için sadece repeat'in dolu olması yeterli
+                    (!string.IsNullOrEmpty(s.Repeat))
+                )
                 .Include(s => s.Device)
                 .ToListAsync();
         }
