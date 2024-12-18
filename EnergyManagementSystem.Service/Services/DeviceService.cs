@@ -129,6 +129,22 @@ namespace EnergyManagementSystem.Core.Services
 
             return deviceDtos;
         }
+        public async Task<int?> GetUserIdByDeviceIdAsync(int deviceId)
+        {
+            var device = await _deviceRepository.GetByIdAsync(deviceId);
+            if (device == null)
+            {
+                throw new Exception($"Device with ID {deviceId} not found.");
+            }
+
+            var house = await _houseRepository.GetByIdAsync(device.HouseId);
+            if (house == null)
+            {
+                throw new Exception($"House with ID {device.HouseId} not found.");
+            }
+
+            return house.UserId;
+        }
 
         public async Task UpdateDeviceStatusAsync(int deviceId, bool status)
         {

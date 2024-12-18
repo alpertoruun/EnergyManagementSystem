@@ -12,5 +12,6 @@ namespace EnergyManagementSystem.Core.Interfaces.IService
         Task DeleteAsync(int deviceId);
         Task<IEnumerable<DeviceDto>> GetDevicesByRoomAsync(int roomId);
         Task UpdateDeviceStatusAsync(int deviceId, bool status);
+        Task<int?> GetUserIdByDeviceIdAsync(int deviceId);
     }
 }
