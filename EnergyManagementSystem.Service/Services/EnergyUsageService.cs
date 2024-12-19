@@ -105,7 +105,7 @@ namespace EnergyManagementSystem.Service.Services
             {
                 UserId = userId.Value,
                 Message = message,
-                Type = "System"
+                Type = "Limit"
             };
 
             await _notificationService.CreateAsync(notification);

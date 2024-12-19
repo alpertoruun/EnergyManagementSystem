@@ -9,6 +9,8 @@ using EnergyManagementSystem.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Hangfire;
+using Hangfire.PostgreSql;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +36,19 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
             pgOptions.CommandTimeout(30);
         });
 });
+
+//hangfire
+builder.Services.AddHangfire(configuration => configuration
+            .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UsePostgreSqlStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+builder.Services.AddHangfireServer();
+builder.Services.AddScoped<ScheduleBackgroundJob>();
+
+
 
 // Repository Registrations
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -149,5 +164,13 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.UseHangfireDashboard("/hangfire");
+
+RecurringJob.AddOrUpdate<ScheduleBackgroundJob>(
+    "check-schedules",
+    job => job.Process(),
+    "* * * * *"
+);
+
 
 app.Run();

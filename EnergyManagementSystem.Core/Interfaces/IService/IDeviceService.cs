@@ -1,5 +1,6 @@
 using EnergyManagementSystem.Core.DTOs;
 using EnergyManagementSystem.Core.DTOs.Device;
+using EnergyManagementSystem.Core.Models;
 using System.Threading.Tasks;
 namespace EnergyManagementSystem.Core.Interfaces.IService
 {
@@ -13,5 +14,6 @@ namespace EnergyManagementSystem.Core.Interfaces.IService
         Task<IEnumerable<DeviceDto>> GetDevicesByRoomAsync(int roomId);
         Task UpdateDeviceStatusAsync(int deviceId, bool status);
         Task<int?> GetUserIdByDeviceIdAsync(int deviceId);
+        Task<IEnumerable<DeviceDto>> GetAllDevicesAsync();
     }
 }

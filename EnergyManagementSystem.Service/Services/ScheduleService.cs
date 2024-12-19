@@ -96,14 +96,15 @@ namespace EnergyManagementSystem.Core.Services
 
         public async Task<IEnumerable<ScheduleDto>> GetActiveSchedulesAsync(int deviceId)
         {
-            var device = await _deviceRepository.GetByIdAsync(deviceId);
-            if (device == null)
-                throw new KeyNotFoundException($"Device with ID {deviceId} not found.");
+            var currentTime = DateTime.UtcNow;
+            var schedules = await _scheduleRepository.GetSchedulesByDeviceIdAsync(deviceId);
 
-            var activeSchedules = await _scheduleRepository.GetActiveSchedulesAsync();
-            var activeDeviceSchedules = activeSchedules.Where(s => s.DeviceId == deviceId);
-
-            return activeDeviceSchedules.Select(MapToScheduleDto);
+            return schedules
+                .Where(s =>
+                    (!string.IsNullOrEmpty(s.Repeat)) || // Tekrarlı olanlar her zaman gelsin
+                    (string.IsNullOrEmpty(s.Repeat) && // Tekrarsız olanlar için
+                     s.EndTime >= currentTime.AddMinutes(-1))) // End date'i henüz geçmemiş olanlar (1 dk tolerans)
+                .Select(MapToScheduleDto);
         }
 
         private ScheduleDto MapToScheduleDto(Schedule schedule)

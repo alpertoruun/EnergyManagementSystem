@@ -1,4 +1,5 @@
-﻿using EnergyManagementSystem.Core.DTOs;
+﻿using AutoMapper;
+using EnergyManagementSystem.Core.DTOs;
 using EnergyManagementSystem.Core.DTOs.Device;
 using EnergyManagementSystem.Core.DTOs.Limit;
 using EnergyManagementSystem.Core.Interfaces;
@@ -15,15 +16,18 @@ namespace EnergyManagementSystem.Core.Services
         private readonly IDeviceRepository _deviceRepository;
         private readonly IHouseRepository _houseRepository;
         private readonly IRoomRepository _roomRepository;
+        private readonly IMapper _mapper;
 
         public DeviceService(
             IDeviceRepository deviceRepository,
             IHouseRepository houseRepository,
-            IRoomRepository roomRepository)
+            IRoomRepository roomRepository,
+            IMapper mapper)
         {
             _deviceRepository = deviceRepository ?? throw new ArgumentNullException(nameof(deviceRepository));
             _houseRepository = houseRepository ?? throw new ArgumentNullException(nameof(houseRepository));
             _roomRepository = roomRepository ?? throw new ArgumentNullException(nameof(roomRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         public async Task<DeviceDto> GetByIdAsync(int deviceId)
@@ -50,6 +54,11 @@ namespace EnergyManagementSystem.Core.Services
             }
 
             return deviceDtos;
+        }
+        public async Task<IEnumerable<DeviceDto>> GetAllDevicesAsync()
+        {
+            var devices = await _deviceRepository.GetAllAsync();
+            return _mapper.Map<IEnumerable<DeviceDto>>(devices);
         }
 
         public async Task<DeviceDto> CreateAsync(int houseId, CreateDeviceDto createDeviceDto)

@@ -15,7 +15,6 @@ namespace EnergyManagementSystem.Core.Interfaces
         // Filtreleme için
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
 
-        // Tek kayıt getirme
         Task<T> SingleOrDefaultAsync(Expression<Func<T, bool>> predicate);
     }
 }
