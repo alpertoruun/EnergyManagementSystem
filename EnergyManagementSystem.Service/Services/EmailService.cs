@@ -4,6 +4,7 @@ using EnergyManagementSystem.Core.Configuration;
 using EnergyManagementSystem.Core.Interfaces;
 using EnergyManagementSystem.Core.Interfaces.IService;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 
 namespace EnergyManagementSystem.Service.Services
 {
@@ -47,15 +48,15 @@ namespace EnergyManagementSystem.Service.Services
         <p>This link will expire in 1 hour.</p>";
             await SendEmailAsync(to, subject, body);
         }
-        public async Task SendEmailConfirmationAsync(string to, string confirmationToken)
+        public async Task SendEmailConfirmationAsync(string to, string token)
         {
-            var subject = "Confirm Your Email Address";
+            var subject = "Email Doğrulama";
             var body = $@"
-        <h2>Welcome to Energy Management System!</h2>
-        <p>Please confirm your email address by clicking the link below:</p>
-        <p><a href='http://localhost:7211/api/auth/confirm-email?token={confirmationToken}&email={to}'>Confirm Email</a></p>
-        <p>This link will expire in 24 hours.</p>
-        <p>If you didn't create an account, please ignore this email.</p>";
+        <h2>Hesap Doğrulama</h2>
+        <p>Hesabınızı doğrulamak için aşağıdaki linke tıklayın:</p>
+        <p><a href='{_emailSettings.ClientUrl}/verify-email?token={token}&email={to}'>Hesabı Doğrula</a></p>
+        <p>Bu linki siz istemediyseniz, lütfen bu emaili görmezden gelin.</p>
+        <p>Bu link 1 saat içinde geçerliliğini yitirecektir.</p>";
             await SendEmailAsync(to, subject, body);
         }
         public async Task SendEmailChangeConfirmationAsync(string to, string token)
