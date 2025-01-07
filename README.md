@@ -111,13 +111,7 @@ cd EMS-UI
 npm install
 ```
 
-4. Configure the environment variables:
-Create a `.env` file in the root directory and add:
-```env
-VITE_API_URL=http://localhost:5000/api
-```
-
-5. Start the development server:
+4. Start the development server:
 ```bash
 npm run dev
 ```
